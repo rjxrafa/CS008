@@ -15,12 +15,16 @@ public:
     virtual ~node() = 0;
     node(const node &other);
     node &operator=(const node &other);
+//    void setData(void *data);
 
     void *access() const;
     virtual void modifyData(void *d) = 0;
 
     node *getNext();
     void setNext(node *ptr);
+
+    void setData(void *ptr);
+
 
 protected:
     virtual void makeCopy(const node &other) = 0;
@@ -33,6 +37,7 @@ private:
 };
 
 }
+
 
 
 #endif //CS008_NODE_H
