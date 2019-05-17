@@ -9,8 +9,9 @@
 #define CS008_NODE_H
 
 #include <iostream>
+#include <cstdio>
 
-namespace binaryTree{
+namespace myBinaryTree{
 
 template<typename T>
 struct node {
@@ -115,19 +116,11 @@ struct node {
 
     template<typename S>
     friend
-    bool operator-=(const node<S> &x, unsigned int c);
-
-    template<typename S>
-    friend
-    bool operator+=(const node<S> &x, unsigned int c);
-
-    template<typename S>
-    friend
     std::ostream& operator<<(std::ostream& out, const node<S> &n);
 
     template<typename S>
     friend
-    std::istream& operator>>(std::istream& in, const node<S> &n);
+    void operator>>(std::istream& in, node<S> &n);
 
 
 private:
@@ -207,119 +200,129 @@ void node<T>::copy(const node<T> &other) {
     set(other.data, other.count);
 }
 
+/// Node-node comparison operators
+
 template<typename S>
 bool operator<(const node<S> &x, const node<S> &y) {
-    return 0;
+    return x.data < y.data;
 }
 
 template<typename S>
 bool operator<=(const node<S> &x, const node<S> &y) {
-    return 0;
+    return x.data <= y.data;
 }
 
 template<typename S>
 bool operator>(const node<S> &x, const node<S> &y) {
-    return 0;
+    return x.data > y.data;
 }
 
 template<typename S>
 bool operator>=(const node<S> &x, const node<S> &y) {
-    return 0;
+    return x.data >= y.data;
 }
 
 template<typename S>
 bool operator==(const node<S> &x, const node<S> &y) {
-    return 0;
+    return x.data == y.data;
 }
 
 template<typename S>
 bool operator&=(const node<S> &x, const node<S> &y) {
-    return 0;
+    return (x.data == y.data) && (x.count == y.count);
 }
 
 template<typename S>
 bool operator!=(const node<S> &x, const node<S> &y) {
-    return 0;
+    return x.data != y.data;
 }
+
+/// Data-node comparison operators
 
 template<typename S>
 bool operator<(const S &x, const node<S> &y) {
-    return 0;
+    return x < y.data;
 }
 
 template<typename S>
 bool operator<=(const S &x, const node<S> &y) {
-    return 0;
+    return x <= y.data;
 }
 
 template<typename S>
 bool operator>(const S &x, const node<S> &y) {
-    return 0;
+    return x > y.data;
 }
 
 template<typename S>
 bool operator>=(const S &x, const node<S> &y) {
-    return 0;
+    return x >= y.data;
 }
 
 template<typename S>
 bool operator==(const S &x, const node<S> &y) {
-    return 0;
+    return x == y.data;
 }
 
 template<typename S>
 bool operator!=(const S &x, const node<S> &y) {
-    return 0;
+    return x != y.data;
 }
+
+/// Node-data comparison operators
 
 template<typename S>
 bool operator<(const node<S> &x, const S &y) {
-    return 0;
+    return x.data < y;
 }
 
 template<typename S>
 bool operator<=(const node<S> &x, const S &y) {
-    return 0;
+    return x.data <= y;
 }
 
 template<typename S>
 bool operator>(const node<S> &x, const S &y) {
-    return 0;
+    return x.data > y;
 }
 
 template<typename S>
 bool operator>=(const node<S> &x, const S &y) {
-    return 0;
+    return x.data >= y;
 }
 
 template<typename S>
 bool operator==(const node<S> &x, const S &y) {
-    return 0;
+    return x.data == y;
 }
 
 template<typename S>
 bool operator!=(const node<S> &x, const S &y) {
-    return 0;
-}
-
-template<typename S>
-bool operator-=(const node<S> &x, unsigned int c) {
-    return 0;
-}
-
-template<typename S>
-bool operator+=(const node<S> &x, unsigned int c) {
-    return 0;
+    return x.data != y;
 }
 
 template<typename S>
 std::ostream &operator<<(std::ostream &out, const node<S> &n) {
-    return <#initializer#>;
+    out << n.data << "  (" << n.count << ") ";
+    return out;
 }
 
+
 template<typename S>
-std::istream &operator>>(std::istream &in, const node<S> &n) {
-    return <#initializer#>;
+void operator>>(std::istream &in, node<S> &n) {
+    std::string line;
+//    char junk;
+    if (&in == &std::cin) {
+        std::cout << "Data: ";
+        std::cin >> n.data; // todo: add data validation
+        getline(in,line);
+        n.count = line.empty() ? 1 : stoi(line);
+        fflush(stdin);
+    }
+    else
+//        in >> n.data >> junk >> n.count >> junk;
+        std::cout << "test";
+
 }
 
 }
