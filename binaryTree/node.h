@@ -1,8 +1,13 @@
 /****
- * This Node implementation has been adapted from Paul Wilkinson's CS008 lectures.
+ * This Node class is the primary container used for the AVL tree implementation. It makes use of
+ * parent nodes to enable fast traversal as well as stl vectors to contain multiple instances of lines/paragraph
+ * for a book parser implementation.
+ *
+ * This implementation has been adapted from Paul Wilkinson's CS008 lectures.
  *
  * @author      Rafael Betita
- * @modified    05-16-2019
+ * @modified    05-25-2019
+ * @namespace   bst
  ****/
 
 #ifndef Node_H
@@ -11,6 +16,7 @@
 #include <iostream>
 #include <cstdio>
 #include <vector>
+#include <fstream>
 
 namespace bst{
 
@@ -18,12 +24,14 @@ template <typename T>
 struct Node {
   T data;
   int count;
-  std::vector<int> line;
+  std::vector<int> line; //todo: abstract book-parser functionality
   std::vector<int> paragraph;
   Node* left;
   Node* right;
+  Node* parent;
+  int balance;
 
-  Node (const T &data = T(), const unsigned int &c = 0);
+  explicit Node (const T &data = T(), const unsigned int &c = 1, Node<T>* parent_ = nullptr);
   ~Node();
   Node(const Node<T> &other);
 
@@ -129,7 +137,7 @@ struct Node {
   friend
   bool operator>>(std::istream& in, Node<S> &n);
 
-private:
+ private:
   void copy(const Node<T> &other);
 };
 
@@ -140,11 +148,13 @@ private:
  * @param c the count of the data
  */
 template<typename T>
-Node<T>::Node(const T &d, const unsigned int &c)
+Node<T>::Node(const T &d, const unsigned int &c, Node<T>* parent_)
     : data(d),
       count(c),
+      balance(0),
       left(nullptr),
-      right(nullptr){}
+      right(nullptr),
+      parent(parent_){}
 
 /**
  * This is the destructor for the node, which clears the data within the node and sets own children to
@@ -154,6 +164,8 @@ template<typename T>
 Node<T>::~Node() {
   data = T();
   count = 0;
+  line.clear();
+  paragraph.clear();
   left = right = nullptr;
 }
 
@@ -232,11 +244,15 @@ template<typename T>
 void Node<T>::Clear() {
   data = T();
   count = 0;
+  line.clear();
+  paragraph.clear();
 }
 
 template<typename T>
 void Node<T>::copy(const Node<T> &other) {
   Set(other.data, other.count);
+  line = other.line;
+  paragraph = other.paragraph;
   left = other.left;
   right = other.right;
 }
@@ -345,7 +361,7 @@ bool operator!=(const Node<S> &x, const S &y) {
 template<typename S>
 std::ostream &operator<<(std::ostream &out, const Node<S> &n) {
   if (&n != nullptr)
-    out << '[' << n.data << ']' << '(' << n.count << ')';
+    out << n.data << " (" << n.count << ')';
 
   return out;
 }
@@ -366,12 +382,21 @@ bool operator>>(std::istream &in, Node<S> &n) {
   }
   else
 //        in >> n.data >> junk >> n.count >> junk;
-    std::cout << "test"; // todo
+    //  std::cout << "test"; // todo
 
-  return false;
+    return false;
 }
 
 } // end namespace bst
-
+/**
+ * @brief The CompareNodes struct
+ * Instruction to tell a priority queue stl how to compare nodes
+ */
+struct CompareNodes {
+  bool operator()(const bst::Node<std::string>& x, const bst::Node<std::string>& y)
+  {
+    return x.count < y.count;
+  }
+};
 
 #endif // Node_H
